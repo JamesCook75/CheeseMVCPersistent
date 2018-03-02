@@ -19,6 +19,18 @@ namespace CheeseMVC.Controllers
 
         public IActionResult Index()
         {
+            if (context.Categories.Count() == 0)
+            {
+                CheeseCategory hard = new CheeseCategory();
+                CheeseCategory soft = new CheeseCategory();
+
+                hard.Name = "Hard";
+                context.Categories.Add(hard);
+                soft.Name = "Soft";
+                context.Categories.Add(soft);
+                context.SaveChanges();
+            }
+
             IList<Cheese> cheeses = context.Cheeses.Include(c => c.Category).ToList();
 
             return View(cheeses);
@@ -87,6 +99,27 @@ namespace CheeseMVC.Controllers
 
             ViewBag.title = "Cheeses in category: " + theCategory.Name;
             return View("Index", theCategory.Cheeses);
+        }
+
+        //TODO
+        public IActionResult Edit(int id)
+        {
+            Cheese editCheese = context.Cheeses.Single(e => e.ID == id);
+            EditAddCheeseViewModel editAddCheeseViewModel =
+                 new EditAddCheeseViewModel(id, editCheese.Name, editCheese.Description);
+            return View(editAddCheeseViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EditAddCheeseViewModel editAddCheeseViewModel)
+        {
+            Cheese editCheese = context.Cheeses.Single(c => c.ID == editAddCheeseViewModel.CheeseId);
+            editCheese.Name = editAddCheeseViewModel.Name;
+            editCheese.Description = editAddCheeseViewModel.Description;
+            
+            context.SaveChanges();
+
+            return Redirect("/");
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using CheeseMVC.ViewModels;
 using CheeseMVC.Data;
 using System.Linq;
+using System.Collections;
 
 namespace CheeseMVC.Controllers
 {
@@ -15,6 +16,18 @@ namespace CheeseMVC.Controllers
         {
             context = dbContext;
         }
+
+        private void AddDefaults()
+        {
+            CheeseCategory newCategory = new CheeseCategory();
+
+            newCategory.Name = "Hard";
+            context.Categories.Add(newCategory);
+            newCategory.Name = "Soft";
+            context.Categories.Add(newCategory);
+            context.SaveChanges();
+        }
+
 
         public IActionResult Index()
         {
